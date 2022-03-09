@@ -1,22 +1,46 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using WishList.Data;
 using WishList.Models;
 
 namespace WishList.Controllers
 {
     public class ItemController : Controller
     {
-        private readonly IEnumerable<Item> _items;
+        private readonly ApplicationDbContext _context;
 
-        public ItemController(IEnumerable<Item> items)
+        public ItemController(ApplicationDbContext context)
         {
-            _items = items;
+            _context = context;
         }
 
         public IActionResult Index()
         {
-            return View(_items.ToList());
+            return View("Index",_context.Items.ToList());
+        }
+
+        [HttpGet]
+        public IActionResult Create()
+        {
+            return View("Create");
+        }
+
+        [HttpPost]
+        public IActionResult Create(Item item)
+        {
+            _context.Items.Add(item);
+            _context.SaveChanges();
+            return RedirectToAction("Index");
+        }
+        public IActionResult Delete(int Id)
+        {
+            var item = _context.Items.FirstOrDefault(x => x.Id == Id);
+            if (item == null)
+                return NotFound();
+            _context.Items.Remove(item);
+            _context.SaveChanges();
+            return RedirectToAction("Index");
         }
     }
 }
