@@ -1,0 +1,9 @@
+﻿@model List<WishList.Models.Item>
+<h1>Wishlist</h1>
+
+<ul>
+    @foreach (var item in @Model)
+    {
+        <li>@item.Description<a asp-action="delete" asp-route-id="Id">delete</a></li>
+    }
+</ul>
